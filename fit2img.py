@@ -15,9 +15,9 @@ if __name__ == "__main__":
 
     # Read the command line options
     parser = OptionParser()
-    parser.add_option("", "--levels", dest="levels",
-                      help="Number of levels",
-                      default=10, type=int)
+    parser.add_option("", "--scale", dest="scaling",
+                      help="Type of scaling (lin / asinh)",
+                      default="lin")
     parser.add_option("-s", "--tilesize", dest="tilesize",
                       help="size of an individual size",
                       default=512, type=int)
@@ -29,6 +29,12 @@ if __name__ == "__main__":
                       help="file type (e.g. png, jpg)",
                       default="png",
                       )
+    parser.add_option("--min", dest="mingood",
+                      help="minimum good flux value",
+                      default=-1e10, type=float)
+    parser.add_option("--max", dest="maxgood",
+                      help="maximum good flux value",
+                      default=+1e10, type=float)
     (options, cmdline_args) = parser.parse_args()
 
 
@@ -62,6 +68,8 @@ if __name__ == "__main__":
     #
     data = hdulist[0].data
 
+    data[(data<options.mingood)|(data>options.maxgood)] = numpy.NaN
+
     n_samples = 1000
     boxwidth=10
 
@@ -88,17 +96,28 @@ if __name__ == "__main__":
 
         valid = numpy.isfinite(samples) & (samples > _med-3*_sigma) & (samples < _med+3*_sigma)
 
-    min_intensity = _med - _sigma
-    max_intensity = _med + 10*_sigma
-    print "Intensity scaling: %f -- %f" % (min_intensity, max_intensity)
+    if (options.scaling == "lin"):
+        min_intensity = _med - _sigma
+        max_intensity = _med + 10*_sigma
+        print "linear Intensity scaling: %f -- %f" % (min_intensity, max_intensity)
+
+        norm_flux = (data - min_intensity) / (max_intensity - min_intensity)
+        norm_flux[norm_flux < 0] = 0.0
+        norm_flux[norm_flux > 1] = 1.0
+    elif (options.scaling == "asinh"):
+        min_intensity = _med - 3*_sigma
+        max_intensity = _med + 30*_sigma
+        print "arcsinh Intensity scaling: %f -- %f" % (min_intensity, max_intensity)
+
+        norm_flux = (data - min_intensity) / (max_intensity - min_intensity)
+        norm_flux[norm_flux < 0] = 0.0
+        norm_flux[norm_flux > 1] = 1.0
+        norm_flux = numpy.arcsinh(norm_flux)
 
     #
     # Create PNG file:
     # remap data from intensity range to 0...255
     #
-    norm_flux = (data - min_intensity) / (max_intensity - min_intensity)
-    norm_flux[norm_flux < 0] = 0.0
-    norm_flux[norm_flux > 1] = 1.0
     greyscale = (norm_flux * 255.).astype(numpy.uint8)
 
     img = Image.fromarray(greyscale)
