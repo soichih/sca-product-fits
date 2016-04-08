@@ -5,8 +5,20 @@ import os, sys, subprocess
 
 if __name__ == "__main__":
 
-    infile = sys.argv[1]
-    outfile = sys.argv[2]
+    outfile = sys.argv[1]
+    infile = sys.argv[2:]
+
+    valid_infiles  = []
+    del_files = []
+    for idx, fn in enumerate(infile):
+        if (fn.endswith(".fz")):
+            tmpfile = "%s.unpack" % (fn)
+            cmd = "funpack -O %s %s" % (tmpfile,fn)
+            os.system(cmd)
+            del_files.append(tmpfile)
+            valid_infiles.append(tmpfile)
+        else:
+            valid_infiles.append(fn)
 
     #
     # Run swarp
@@ -19,7 +31,7 @@ if __name__ == "__main__":
     -FSCALE_KEYWORD XXXXXXX
     -VERBOSE_TYPE QUIET
     %s
-    """ % (outfile, infile)
+    """ % (outfile, " ".join(valid_infiles))
 
     try:
         ret = subprocess.Popen(cmd.split(), 
@@ -31,3 +43,6 @@ if __name__ == "__main__":
     except OSError as e:
         print >>sys.stderr, "Execution failed:", e
     
+    for fn in del_files:
+        if (os.path.isfile(fn)):
+            os.remove(fn)
