@@ -9,14 +9,17 @@ then
 fi
 
 input_task_id=`$SCA_SERVICE_DIR/jq -r '.input_task_id' config.json`
+#echo "using $input_task_id"
 mkdir -p output
 
-files=`$SCA_SERVICE_DIR/jq -r '.[0] .files' ../$input_task_id/products.json`
+files=`$SCA_SERVICE_DIR/jq -r '.[0] .files[] .filename' ../$input_task_id/products.json`
 echo $files
 
 for file in $files; do
-    fits=../$input_task_id/$file
-    echo "processing $fits"
+    echo "processing $file"
+
+    echo "converting to single extension" 
+    $SCA_SERVICE_DIR/mef2fits.py $fits ../$input_task_id/$file
 done
 
 
