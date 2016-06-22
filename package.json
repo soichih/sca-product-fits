@@ -1,5 +1,5 @@
 {
-  "name": "sca-product-fits",
+  "name": "sca-service-fits2png",
   "version": "1.0.0",
   "description": "Convert soichih/fits data products into soichih/png",
   "main": "index.js",
