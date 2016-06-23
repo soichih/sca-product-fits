@@ -46,6 +46,15 @@ for file in $files; do
     fi
 
     curl -s -X POST -H "Content-Type: application/json" \
+        -d "{\"msg\":\"denerating DZI\", \"progress\":0.8}" ${SCA_PROGRESS_URL}.$i
+    echo "$SCA_SERVICE_DIR/png2dzi ${file}.png ${file}.dzi"
+    $SCA_SERVICE_DIR/png2dzi ${file}.png ${file}.dz 
+    if [ ! $? -eq 0 ]; then
+        curl -s -X POST -H "Content-Type: application/json" \
+            -d "{\"msg\":\"png2dzi returned $?\", \"status\":\"failed\"}" ${SCA_PROGRESS_URL}.$i
+    fi
+
+    curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"cleaning up\", \"status\":\"finished\", \"progress\": 1}" ${SCA_PROGRESS_URL}.$i
 
     #rm $file

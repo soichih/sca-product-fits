@@ -1,25 +1,23 @@
+## Installation
+
+For png > dzi conversion, you need to install depzoom.py on the resource that you are running this service
+> https://github.com/openzoom/deepzoom.py.git
+
 ## conversion script
 
 fits2img.py analyzes input fits image and convert to png using the optimal scaling.
 
 ```
-../fits2img.py -t png -o m67 m67.fits  
+../mef2fits.py m67.single.fits m67.mef.fits
+../fits2img.py -t png -o m67 m67.single.fits
 ```
 
 ## Notes
 
-fits2img.py doesn't work on some ODI detrended images.
-
-```
-$ ./fits2img.py -t png -o 20121009T153329.0 ~/workflows/570d14e266a1e2fc1ef5a843/57684fa567c3f50d4b214cb2/output/20121009T153329.0.fits
-Traceback (most recent call last):
- File "./fits2img.py", line 71, in <module>
-   data[(data<options.mingood)|(data>options.maxgood)] = numpy.NaN
-TypeError: 'NoneType' object does not support item assignment
-```
-
-gm(GraphicsMagick) convert works, on the other hand..
+gm(GraphicsMagick) can also convert fits(including multi extension) to png
 
 ```
 gm convert 20121009T153329.0.fits 20121009T153329.0.png
 ```
+
+Converting image to DZI (compatible with openseadragon) could be done with tools like https://github.com/vikbez/img2dzi
