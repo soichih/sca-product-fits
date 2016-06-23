@@ -29,10 +29,12 @@ for file in $files; do
     curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"converting $file to single extension fits\", \"status\":\"running\"}" ${SCA_PROGRESS_URL}.$i
     $SCA_SERVICE_DIR/mef2fits.py $file ../$input_task_id/$file
+    echo $?
 
     curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"converting $file to png\", \"progress\":0.5}" ${SCA_PROGRESS_URL}.$i
     $SCA_SERVICE_DIR/fits2img.py -t png -o ${file}.png $file
+    echo $?
 
     curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"cleaning up\", \"status\":\"finished\"}" ${SCA_PROGRESS_URL}.$i
