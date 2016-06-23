@@ -19,7 +19,7 @@ for file in $files; do
     echo "processing $file"
 
     echo "converting to single extension" 
-    $SCA_SERVICE_DIR/mef2fits.py $fits ../$input_task_id/$file
+    $SCA_SERVICE_DIR/mef2fits.py $file ../$input_task_id/$file
 done
 
 
