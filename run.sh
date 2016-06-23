@@ -19,7 +19,7 @@ echo $files
 i=0
 for file in $files; do
     ((i = i + 1))  
-    curl -s -X POST -H "Content-Type: application/json" -d "{\"name\":\"$file\", \"status\":\"waiting\"}" ${SCA_PROGRESS_URL}.$i
+    curl -s -X POST -H "Content-Type: application/json" -d "{\"name\":\"$file\", \"status\":\"waiting\", \"progress\": 0}" ${SCA_PROGRESS_URL}.$i
 done
 
 i=0
@@ -44,7 +44,7 @@ for file in $files; do
     fi
 
     curl -s -X POST -H "Content-Type: application/json" \
-        -d "{\"msg\":\"cleaning up\", \"status\":\"finished\"}" ${SCA_PROGRESS_URL}.$i
+        -d "{\"msg\":\"cleaning up\", \"status\":\"finished\", \"progress\": 1}" ${SCA_PROGRESS_URL}.$i
     rm $file
 done
 
