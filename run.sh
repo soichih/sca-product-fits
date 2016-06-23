@@ -45,7 +45,8 @@ for file in $files; do
 
     curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"cleaning up\", \"status\":\"finished\", \"progress\": 1}" ${SCA_PROGRESS_URL}.$i
-    rm $file
+
+    #rm $file
 done
 
 
