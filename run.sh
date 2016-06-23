@@ -18,8 +18,14 @@ echo $files
 for file in $files; do
     echo "processing $file"
 
-    echo "converting to single extension" 
+    curl -X POST -H "Content-Type: application/json" -d "{\"msg\":\"converting $file to single extension fits\"}" $SCA_PROGRESS_URL
     $SCA_SERVICE_DIR/mef2fits.py $file ../$input_task_id/$file
+
+    curl -X POST -H "Content-Type: application/json" -d "{\"msg\":\"converting $file to png\"}" $SCA_PROGRESS_URL
+    $SCA_SERVICE_DIR/fits2img.py -t png -o $file.png $file
+
+    echo "cleaning $file"
+    rm $file
 done
 
 
