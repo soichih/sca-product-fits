@@ -38,8 +38,8 @@ for file in $files; do
 
     curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"converting $file to png\", \"progress\":0.5}" ${SCA_PROGRESS_URL}.$i
-    echo "$SCA_SERVICE_DIR/fits2img.py -t png -o ${file}.png $file"
-    $SCA_SERVICE_DIR/fits2img.py -t png -o ${file}.png $file
+    echo "$SCA_SERVICE_DIR/fits2img.py -t png -o $file $file"
+    $SCA_SERVICE_DIR/fits2img.py -t png -o $file $file
     if [ ! $? -eq 0 ]; then
         curl -s -X POST -H "Content-Type: application/json" \
             -d "{\"msg\":\"fits2img returned $?\", \"status\":\"failed\"}" ${SCA_PROGRESS_URL}.$i
@@ -48,7 +48,7 @@ for file in $files; do
     curl -s -X POST -H "Content-Type: application/json" \
         -d "{\"msg\":\"denerating DZI\", \"progress\":0.8}" ${SCA_PROGRESS_URL}.$i
     echo "$SCA_SERVICE_DIR/png2dzi ${file}.png ${file}.dzi"
-    $SCA_SERVICE_DIR/png2dzi ${file}.png ${file}.dz 
+    $SCA_SERVICE_DIR/png2dzi ${file}.png ${file}.dzi
     if [ ! $? -eq 0 ]; then
         curl -s -X POST -H "Content-Type: application/json" \
             -d "{\"msg\":\"png2dzi returned $?\", \"status\":\"failed\"}" ${SCA_PROGRESS_URL}.$i
@@ -61,3 +61,5 @@ for file in $files; do
 done
 
 
+#fake it for now
+echo "[]" > products.json
