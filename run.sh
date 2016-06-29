@@ -41,7 +41,7 @@ for file in $files; do
         -d "{\"msg\":\"converting $file to png\", \"progress\":0.5}" ${SCA_PROGRESS_URL}.$i
 
     echo "$SCA_SERVICE_DIR/fits2img.py -t png -o $file $file"
-    $SCA_SERVICE_DIR/fits2img.py -t png -o $file $file
+    $SCA_SERVICE_DIR/fits2img.py --mask -t png -o $file $file
     if [ ! $? -eq 0 ]; then
         curl -s -X POST -H "Content-Type: application/json" \
             -d "{\"msg\":\"fits2img returned $?\", \"status\":\"failed\"}" ${SCA_PROGRESS_URL}.$i
