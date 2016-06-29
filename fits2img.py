@@ -35,6 +35,12 @@ if __name__ == "__main__":
     parser.add_option("--max", dest="maxgood",
                       help="maximum good flux value",
                       default=+1e10, type=float)
+    parser.add_option("--mask", dest="mask",
+                      help="mask all pixels without valid data",
+                      action="store_true")
+    parser.add_option("-n", "--nsamples", dest="nsamples",
+                      help="number of samples for scaling determination",
+                      default=1000, type=int)
     (options, cmdline_args) = parser.parse_args()
 
 
@@ -67,10 +73,21 @@ if __name__ == "__main__":
     # Find best scaling
     #
     data = hdulist[0].data
+    if (data == None):
+        print ("No image data found in PrimaryHDU - need to run mef2fits first?")
+        sys.exit(0)
 
+    print("Image-size: %d x %d" % (data.shape[1], data.shape[0]))
+    print("Masking out pixels with intensities outside valid range")
     data[(data<options.mingood)|(data>options.maxgood)] = numpy.NaN
 
-    n_samples = 1000
+    if (options.mask):
+        print("Masking out pixels without valid data")
+        data[data == 0.0] = numpy.NaN
+    #print data
+    #print data.shape
+
+    n_samples = options.nsamples
     boxwidth=10
 
     box_center_x = numpy.random.randint(boxwidth, data.shape[1]-boxwidth, n_samples)
@@ -88,13 +105,19 @@ if __name__ == "__main__":
     # Now do some filtering of the median values
     #
     valid = numpy.isfinite(samples)
+    #_old_sigma, _old_med = numpy.max(samples) - numpy.min(samples)
     for iter in range(3):
     
-        _med = numpy.median(samples)
-        _vars = scipy.stats.scoreatpercentile(samples[valid], [16,84])
+        _med = numpy.median(samples[valid])
+        _vars = numpy.percentile(samples[valid], [16,84])
+        #_vars = scipy.stats.scoreatpercentile(samples[valid], [16,84])
         _sigma = 0.5*(_vars[1] - _vars[0])
 
+        print iter, numpy.sum(valid), _med, _vars, _sigma
+
         valid = numpy.isfinite(samples) & (samples > _med-3*_sigma) & (samples < _med+3*_sigma)
+        if (numpy.sum(valid) <= 0):
+            break
 
     if (options.scaling == "lin"):
         min_intensity = _med - _sigma
