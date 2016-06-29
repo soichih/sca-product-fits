@@ -64,6 +64,7 @@ for file in $files; do
     #rm $file
 done
 
+$SCA_SERVICE_DIR/generate_products.py
 
 #fake it for now
-echo "[]" > products.json
+#echo "[]" > products.json
