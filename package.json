@@ -1,11 +1,12 @@
 {
-  "name": "sca-product-fits",
+  "name": "sca-service-fits2png",
   "version": "1.0.0",
-  "description": "",
+  "description": "Convert soichih/fits data products into soichih/png",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "run.sh"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Soichi Hayashi <hayashis@iu.edu>",
+  "license": "MIT"
 }
