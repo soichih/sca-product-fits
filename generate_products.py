@@ -12,8 +12,8 @@ for file in os.listdir("output"):
         dzis.append({"filename": "output/"+file}) #what about size?
 
 products = []
-products.append({"type": "image", "files": images})
-products.append({"type": "dzi", "files": dzis})
+products.append({"type": "soichih/image", "files": images})
+products.append({"type": "soichih/dzi", "files": dzis})
 
 with open("products.json", "w") as outfile:
     json.dump(products, outfile)
